@@ -23,20 +23,19 @@ namespace Services.Providers.DuckDuckGo
                 return searchResults;
             }
 
-            var resultLabels = html.DocumentNode.SelectNodes("//table[comment()]/tr/td/a[@class='result-link']")?.ToArray();
-            var resultLinks = html.DocumentNode.SelectNodes("//table[comment()]/tr/td/span[@class='link-text']")?.ToArray();
+            var resultLinks = html.DocumentNode.SelectNodes("//table[comment()]/tr/td/a[@class='result-link']")?.ToArray();
 
-            if(resultLabels == null || resultLinks == null)
+            if(resultLinks == null)
             {
                 return searchResults;
             }
 
-            for(int i=0; i < resultLabels.Length; i++)
+            for(int i=0; i < resultLinks.Length; i++)
             {
                 var searchResult = new SearchResult();
 
-                searchResult.Label = RemoveUnwantedTags(resultLabels[i].InnerText);
-                searchResult.Url = resultLinks[i].InnerText;
+                searchResult.Label = RemoveUnwantedTags(resultLinks[i].InnerText);
+                searchResult.Url = resultLinks[i].Attributes["href"].Value;
                 searchResult.SearchEngine = new List<SearchProvider>() { SearchProvider.DuckDuckGo };
 
                 searchResults.Add(searchResult);
