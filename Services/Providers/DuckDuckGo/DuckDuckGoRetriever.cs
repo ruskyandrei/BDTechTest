@@ -4,18 +4,21 @@ using System.Web;
 using HtmlAgilityPack;
 using Services.Configuration;
 using Services.Enums;
+using Services.Models;
 
-namespace Services.Providers.Google
+namespace Services.Providers.DuckDuckGo
 {
-    public class GoogleRetriever : IRetriever
+    public class DuckDuckGoRetriever : IRetriever
     {
-        public SearchProvider SearchProvider => SearchProvider.Google;
+        public SearchProvider SearchProvider => SearchProvider.DuckDuckGo;
 
         private string NextPageUrl = null;
-        private readonly string BaseAddress = "https://www.google.com";
-        private readonly IConfig _config;
 
-        public GoogleRetriever(IConfig config)
+        private IConfig _config;
+        private readonly IProxyService _proxyService;
+        private readonly string BaseAddress = "https://duckduckgo.com";
+
+        public DuckDuckGoRetriever(IConfig config)
         {
             _config = config;
         }
@@ -25,8 +28,8 @@ namespace Services.Providers.Google
             var web = new HtmlWeb();
             web.UserAgent = _config.UserAgent;
 
-            var doc = web.Load($"{BaseAddress}/search?q={searchTerm}");
-            
+            var doc = web.Load($"{BaseAddress}/lite?q={searchTerm}");
+
             NextPageUrl = GetLinkToNextPage(doc);
 
             return doc;
@@ -34,7 +37,7 @@ namespace Services.Providers.Google
 
         public async Task<HtmlDocument> RetrieveResultsFromProviderNextPage()
         {
-            if(NextPageUrl==null)
+            if (NextPageUrl == null)
             {
                 return null;
             }
@@ -54,16 +57,16 @@ namespace Services.Providers.Google
 
         private string GetLinkToNextPage(HtmlDocument doc)
         {
-            var nextPageNode = doc.DocumentNode.SelectSingleNode("//a[@id='pnnext']");
+            var nextPageCommentNode = doc.DocumentNode.SelectSingleNode($"//form[@class='next_form' and @action='/lite/']/comment()");
 
-            if(nextPageNode == null)
+            if (nextPageCommentNode == null)
             {
                 return null;
             }
 
-            var href = nextPageNode.Attributes["href"].Value;
+            var href = nextPageCommentNode.InnerHtml.Replace("<!-- <a rel=\"next\" href=\"", "").Replace("\">Next Page &gt;</a> //-->", "");
 
-            return HttpUtility.HtmlDecode(href);
+            return href;
         }
     }
 }

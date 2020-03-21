@@ -6,6 +6,6 @@ namespace Services
 {
     public interface IAggregatorService
     {
-        Task<IEnumerable<SearchResult>> AggregateResults(IEnumerable<SearchResult> searchResults);
+        Task<IEnumerable<SearchResult>> AggregateResults(IEnumerable<IEnumerable<SearchResult>> searchResults);
     }
 }

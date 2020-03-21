@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Providers\Bing\" />
-    <Folder Include="Providers\DuckDuckGo\" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.22" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
 </Project>

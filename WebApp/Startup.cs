@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Services;
+using Services.Configuration;
 
 namespace WebApp
 {
@@ -28,6 +30,9 @@ namespace WebApp
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            services.AddSingleton<IConfig, Config>();
+            services.AddSingleton<IProxyService, ProxyService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

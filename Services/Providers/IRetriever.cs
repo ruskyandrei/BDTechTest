@@ -1,4 +1,5 @@
-﻿using Services.Enums;
+﻿using HtmlAgilityPack;
+using Services.Enums;
 using Services.Models;
 using System;
 using System.Collections.Generic;
@@ -16,12 +17,12 @@ namespace Services.Providers
         /// </summary>
         /// <param name="searchTerm"></param>
         /// <returns></returns>
-        Task<string> RetrieveResultsFromProvider(string searchTerm);
+        Task<HtmlDocument> RetrieveResultsFromProvider(string searchTerm);
 
         /// <summary>
         /// Returns the html body of the response from the next page of a search against a provider
         /// </summary>
         /// <returns></returns>
-        Task<string> RetrieveResultsFromProviderNextPage();
+        Task<HtmlDocument> RetrieveResultsFromProviderNextPage();
     }
 }

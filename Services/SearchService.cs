@@ -15,30 +15,34 @@ namespace Services
         private readonly IEnumerable<IRetriever> _retrievers;
         private readonly IEnumerable<IScraper> _scrapers;
         private readonly IAggregatorService _aggregatorService;
+        private readonly IConfig _config;
 
-        public SearchService(IEnumerable<IRetriever> retrievers, IEnumerable<IScraper> scrapers, IAggregatorService aggregatorService)
+        public SearchService(IEnumerable<IRetriever> retrievers, IEnumerable<IScraper> scrapers, IAggregatorService aggregatorService, IConfig config)
         {
             _retrievers = retrievers;
             _scrapers = scrapers;
             _aggregatorService = aggregatorService;
+            _config = config;
         }
 
         public async Task<IEnumerable<SearchResult>> Search(string searchTerm)
         {
             //get results from all enabled search providers
             var searchTasks = new List<Task<IEnumerable<SearchResult>>>();
-            foreach (var searchProvider in Config.EnabledSearchProviders)
+            foreach (var searchProvider in _config.EnabledSearchProviders)
             {
                 searchTasks.Add(SearchUsingSearchProvider(searchTerm, searchProvider));
             }
-            var results = (await Task.WhenAll(searchTasks)).SelectMany(sr => sr);
+            var results = await Task.WhenAll(searchTasks);
 
             //aggregate results
-            return await _aggregatorService.AggregateResults(results);
+            //return await _aggregatorService.AggregateResults(results);
+            return results.SelectMany(r => r);
         }
 
-        public async Task<IEnumerable<SearchResult>> SearchUsingSearchProvider(string searchTerm, SearchProvider searchProvider)
+        private async Task<IEnumerable<SearchResult>> SearchUsingSearchProvider(string searchTerm, SearchProvider searchProvider)
         {
+            var randomDelayMs = new Random();
             var searchResults = new List<SearchResult>();
 
             var retriever = _retrievers.SingleOrDefault(r => r.SearchProvider == searchProvider);
@@ -62,10 +66,12 @@ namespace Services
             searchResults.AddRange(scrapedResults);
 
             //retrieve and scrape more pages until we have enough results
-            while(searchResults.Count() < Config.NumberOfResults || scrapedResults.Count() > 0)
+            while(searchResults.Count() < _config.NumberOfResults && scrapedResults.Count() > 0)
             {
                 htmlResult = await retriever.RetrieveResultsFromProviderNextPage();
                 scrapedResults = await scraper.ScrapeResults(htmlResult);
+
+                searchResults.AddRange(scrapedResults);
             }
 
             return searchResults;

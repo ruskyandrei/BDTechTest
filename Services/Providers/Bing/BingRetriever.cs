@@ -4,18 +4,21 @@ using System.Web;
 using HtmlAgilityPack;
 using Services.Configuration;
 using Services.Enums;
+using Services.Models;
 
-namespace Services.Providers.Google
+namespace Services.Providers.Bing
 {
-    public class GoogleRetriever : IRetriever
+    public class BingRetriever : IRetriever
     {
-        public SearchProvider SearchProvider => SearchProvider.Google;
+        public SearchProvider SearchProvider => SearchProvider.Bing;
 
+        private string SearchTerm = null;
         private string NextPageUrl = null;
-        private readonly string BaseAddress = "https://www.google.com";
-        private readonly IConfig _config;
 
-        public GoogleRetriever(IConfig config)
+        private readonly IConfig _config;
+        private readonly string BaseAddress = "https://www.bing.com";
+
+        public BingRetriever(IConfig config)
         {
             _config = config;
         }
@@ -26,15 +29,16 @@ namespace Services.Providers.Google
             web.UserAgent = _config.UserAgent;
 
             var doc = web.Load($"{BaseAddress}/search?q={searchTerm}");
-            
-            NextPageUrl = GetLinkToNextPage(doc);
+
+            SearchTerm = searchTerm;
+            NextPageUrl = GetLinkToNextPage(doc);            
 
             return doc;
         }
 
         public async Task<HtmlDocument> RetrieveResultsFromProviderNextPage()
         {
-            if(NextPageUrl==null)
+            if (NextPageUrl == null)
             {
                 return null;
             }
@@ -54,9 +58,11 @@ namespace Services.Providers.Google
 
         private string GetLinkToNextPage(HtmlDocument doc)
         {
-            var nextPageNode = doc.DocumentNode.SelectSingleNode("//a[@id='pnnext']");
+            var navNode = doc.DocumentNode.SelectSingleNode($"//nav[@role='navigation' and @aria-label='More results for {SearchTerm}']/ul");
 
-            if(nextPageNode == null)
+            var nextPageNode = navNode?.LastChild?.LastChild;
+
+            if (nextPageNode == null)
             {
                 return null;
             }
