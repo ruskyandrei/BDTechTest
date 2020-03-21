@@ -30,7 +30,7 @@ namespace Services.Providers.Bing
 
                 searchResult.Url = HttpUtility.HtmlDecode(link.Attributes["href"].Value);
                 searchResult.Label = HttpUtility.HtmlDecode(link.InnerText);
-                searchResult.SearchEngine = SearchProvider.Bing;
+                searchResult.SearchEngine = new List<SearchProvider>() { SearchProvider.Bing };
 
                 searchResults.Add(searchResult);
             }

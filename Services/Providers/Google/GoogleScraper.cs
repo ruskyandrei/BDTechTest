@@ -35,7 +35,7 @@ namespace Services.Providers.Google
 
                 searchResult.Url = HttpUtility.HtmlDecode(link.Attributes["href"].Value);
                 searchResult.Label = HttpUtility.HtmlDecode(link.ChildNodes["h3"] != null ? link.ChildNodes["h3"].InnerText : link.InnerText);
-                searchResult.SearchEngine = SearchProvider.Google;
+                searchResult.SearchEngine = new List<SearchProvider>() { SearchProvider.Google };
 
                 searchResults.Add(searchResult);
             }

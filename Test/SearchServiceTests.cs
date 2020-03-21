@@ -36,12 +36,11 @@ namespace Test
             public string UserAgent => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36";
         }
 
-        private TestConfig Config = new TestConfig();
+        private readonly IConfig Config = new TestConfig();
 
         [SetUp]
         public void Setup()
-        {
-
+        {  
         }
 
         [Test]
@@ -62,9 +61,9 @@ namespace Test
                 new BingScraper()
             };
 
-            var aggregatorMock = new Mock<IAggregatorService>().Object;
+            var aggregatorService = new AggregatorService();
 
-            var searchService = new SearchService(retrievers, scrapers, aggregatorMock, Config);
+            var searchService = new SearchService(retrievers, scrapers, aggregatorService, Config);
             //Act
             var results = await searchService.Search("tesla");
             //Assert

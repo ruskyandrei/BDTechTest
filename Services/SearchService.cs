@@ -36,8 +36,7 @@ namespace Services
             var results = await Task.WhenAll(searchTasks);
 
             //aggregate results
-            //return await _aggregatorService.AggregateResults(results);
-            return results.SelectMany(r => r);
+            return await _aggregatorService.AggregateResults(results);
         }
 
         private async Task<IEnumerable<SearchResult>> SearchUsingSearchProvider(string searchTerm, SearchProvider searchProvider)

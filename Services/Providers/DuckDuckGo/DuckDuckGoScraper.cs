@@ -37,7 +37,7 @@ namespace Services.Providers.DuckDuckGo
 
                 searchResult.Label = RemoveUnwantedTags(resultLabels[i].InnerText);
                 searchResult.Url = resultLinks[i].InnerText;
-                searchResult.SearchEngine = SearchProvider.DuckDuckGo;
+                searchResult.SearchEngine = new List<SearchProvider>() { SearchProvider.DuckDuckGo };
 
                 searchResults.Add(searchResult);
             }

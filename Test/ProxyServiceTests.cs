@@ -9,6 +9,7 @@ namespace Test
 {
     public class ProxyServiceTests
     {
+        [Ignore("not used")]
         [Test]
         public async Task GetProxyReturnsAProxy()
         {
