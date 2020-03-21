@@ -8,6 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Services;
 using Services.Configuration;
+using Services.Providers;
+using Services.Providers.Bing;
+using Services.Providers.DuckDuckGo;
+using Services.Providers.Google;
 
 namespace WebApp
 {
@@ -32,7 +36,17 @@ namespace WebApp
             });
 
             services.AddSingleton<IConfig, Config>();
-            services.AddSingleton<IProxyService, ProxyService>();
+            //services.AddSingleton<IProxyService, ProxyService>();          
+            
+            services.AddScoped<IRetriever, GoogleRetriever>();
+            services.AddScoped<IRetriever, BingRetriever>();
+            services.AddScoped<IRetriever, DuckDuckGoRetriever>();
+            services.AddScoped<IScraper, GoogleScraper>();
+            services.AddScoped<IScraper, BingScraper>();
+            services.AddScoped<IScraper, DuckDuckGoScraper>();
+
+            services.AddScoped<IAggregatorService, AggregatorService>();
+            services.AddScoped<ISearchService, SearchService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +55,7 @@ namespace WebApp
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseCors(c => c.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             }
             else
             {
@@ -60,7 +75,7 @@ namespace WebApp
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-            });
+            });            
 
             app.UseSpa(spa =>
             {

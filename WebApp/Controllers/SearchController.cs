@@ -1,15 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services;
+using Services.Enums;
+using Services.Models;
 
 namespace WebApp.Controllers
 {
-    [Route("[controller]")]
+    [Route("/api/[controller]")]
     [ApiController]
     public class SearchController : ControllerBase
     {
+        private readonly ISearchService _searchService;
+
+        public SearchController(ISearchService searchService)
+        {
+            _searchService = searchService;
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<SearchResult>> Get([FromQuery] string searchTerm)
+        {
+            return await _searchService.Search(searchTerm);
+        }
     }
 }

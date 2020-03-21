@@ -1,0 +1,26 @@
+﻿.searchButton {
+    margin-left: 10px;
+    width: 60px;
+}
+
+.searchContainer {
+    margin: auto;
+    width: 300px;
+}
+
+.resultsContainer {
+    margin: auto;
+    width: 100%;
+}
+
+.loaderDiv {
+    display: flex;
+    justify-content: space-between;
+    width: 200px;
+}
+
+.resultDiv {
+    display: flex;
+    justify-content: space-between;
+    margin: 30px;   
+}
