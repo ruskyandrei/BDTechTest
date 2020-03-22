@@ -60,7 +60,7 @@ namespace Services
             }
 
             var multiProviderResults = mergedResults.Where(mr => mr.SearchEngine.Count() > 1).ToList();
-            multiProviderResults.Sort((a, b) => b.SearchEngine.Count() - a.SearchEngine.Count());
+            multiProviderResults.Sort((a, b) => a.SearchEngine.Count() - b.SearchEngine.Count());
 
             foreach (var multiProviderResult in multiProviderResults)
             {

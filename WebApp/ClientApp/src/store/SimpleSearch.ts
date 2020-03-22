@@ -27,9 +27,6 @@ export enum SearchProvider {
 // They do not themselves have any side-effects; they just describe something that is going to happen.
 // Use @typeName and isActionType for type detection that works even after serialization/deserialization.
 
-export interface IncrementCountAction { type: 'INCREMENT_COUNT_SS' }
-export interface DecrementCountAction { type: 'DECREMENT_COUNT_SS' }
-
 interface RequestSearchResultsAction {
     type: 'REQUEST_SEARCH_RESULTS';
     searchTerm: string;
@@ -42,7 +39,7 @@ interface ReceiveSearchResultsAction {
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-export type KnownAction = IncrementCountAction | DecrementCountAction | RequestSearchResultsAction | ReceiveSearchResultsAction;
+export type KnownAction = RequestSearchResultsAction | ReceiveSearchResultsAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.

@@ -30,8 +30,8 @@ class SearchCounter extends React.PureComponent<CounterProps, {searchBoxValue: s
         return (
             <React.Fragment>
                 <div className="searchContainer">                
-                    <h1 id="tabelLabel">Search</h1>    
-                    <input id="searchBox" onChange={(event) => this.updateSearchTerm(event)}></input>
+                    <h1 id="tabelLabel">Search</h1>
+                    <input id="searchBox" onChange={(event) => this.updateSearchTerm(event)} onKeyPress={(event) => this.onSearchKeyPress(event)}></input>
                     <button className='btn btn-outline-secondary searchButton' onClick={() => this.doSearch()}>Go</button>
                     {this.props.isLoading && <div className='loaderDiv'><span>Loading...</span> <img src={loader} alt='loader'></img></div> }
                 </div>
@@ -56,6 +56,12 @@ class SearchCounter extends React.PureComponent<CounterProps, {searchBoxValue: s
            }
         );
     }    
+
+    private onSearchKeyPress(event: React.KeyboardEvent) {
+        if (event.key == 'Enter') {
+            this.doSearch();
+        }
+    }
 
     private doSearch() {
         this.props.requestSearchResults(this.state.searchBoxValue);
