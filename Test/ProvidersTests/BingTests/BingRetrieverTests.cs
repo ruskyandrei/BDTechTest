@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
 using Services;
 using Services.Configuration;
 using Services.Providers;
@@ -15,9 +17,8 @@ namespace Test.ProvidersTests.BingTests
         [SetUp]
         public void Setup()
         {
-            Retriever = new BingRetriever(new Config());
+            Retriever = new BingRetriever(new Config(), new Mock<ILogger<BingRetriever>>().Object);
         }
-
 
         [Test]
         public async Task ReturnsHtmlPageWhenSearchIsCalled()
@@ -42,6 +43,18 @@ namespace Test.ProvidersTests.BingTests
 
             //Assert
             Assert.IsTrue(htmlResult.Text.Contains("aria-label=\"Page 1\""));            
+        }
+
+        [Test]
+        public async Task CanSearchForMultipleWords()
+        {
+            //Arrange
+
+            //Act
+            var htmlResult = await Retriever.RetrieveResultsFromProvider("I like ice-cream");
+
+            //Assert
+            Assert.IsTrue(htmlResult.Text.Contains("<title>I like ice-cream - Bing</title>"));
         }
     }
 }

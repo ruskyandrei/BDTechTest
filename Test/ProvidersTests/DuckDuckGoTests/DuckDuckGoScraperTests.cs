@@ -1,4 +1,6 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using Services.Providers;
 using Services.Providers.Bing;
@@ -20,7 +22,7 @@ namespace Test.ProvidersTests.DuckDuckGoTests
         [SetUp]
         public void Setup()
         {
-            Scraper = new DuckDuckGoScraper();
+            Scraper = new DuckDuckGoScraper(new Mock<ILogger<DuckDuckGoScraper>>().Object);
             HtmlPage = new HtmlDocument();
 
             HtmlPage.Load(@"ProvidersTests\DuckDuckGoTests\DuckDuckGoHtmlPage.txt");

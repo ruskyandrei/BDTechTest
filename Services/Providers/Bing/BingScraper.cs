@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using Services.Enums;
 using Services.Models;
 
@@ -11,14 +12,22 @@ namespace Services.Providers.Bing
 {
     public class BingScraper : IScraper
     {
+        private readonly ILogger _logger;
+
         public SearchProvider SearchProvider => SearchProvider.Bing;
+
+        public BingScraper(ILogger<BingScraper> logger)
+        {
+            _logger = logger;
+        }
 
         public async Task<IEnumerable<SearchResult>> ScrapeResults(HtmlDocument html)
         {
             var searchResults = new List<SearchResult>();
 
-            if (html == null)
+            if (html == null || html.DocumentNode == null)
             {
+                _logger.LogWarning("No html document to scrape.");
                 return searchResults;
             }
 

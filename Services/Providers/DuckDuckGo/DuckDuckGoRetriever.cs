@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web;
 using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using Services.Configuration;
 using Services.Enums;
 using Services.Models;
@@ -15,12 +16,14 @@ namespace Services.Providers.DuckDuckGo
         private string NextPageUrl = null;
 
         private IConfig _config;
-        private readonly IProxyService _proxyService;
+        private readonly ILogger<DuckDuckGoRetriever> _logger;
+
         private readonly string BaseAddress = "https://duckduckgo.com";
 
-        public DuckDuckGoRetriever(IConfig config)
+        public DuckDuckGoRetriever(IConfig config, ILogger<DuckDuckGoRetriever> logger)
         {
             _config = config;
+            _logger = logger;
         }
 
         public async Task<HtmlDocument> RetrieveResultsFromProvider(string searchTerm)
@@ -39,6 +42,7 @@ namespace Services.Providers.DuckDuckGo
         {
             if (NextPageUrl == null)
             {
+                _logger.LogWarning("Couldn't find next page information");
                 return null;
             }
 

@@ -1,4 +1,6 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using Services.Providers;
 using Services.Providers.Google;
@@ -19,7 +21,7 @@ namespace Test.ProvidersTests.GoogleTests
         [SetUp]
         public void Setup()
         {
-            Scraper = new GoogleScraper();
+            Scraper = new GoogleScraper(new Mock<ILogger<GoogleScraper>>().Object);
             HtmlPage = new HtmlDocument();
 
             HtmlPage.Load(@"ProvidersTests\GoogleTests\GoogleHtmlPage.txt");

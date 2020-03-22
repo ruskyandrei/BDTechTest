@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web;
 using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using Services.Configuration;
 using Services.Enums;
 
@@ -14,10 +15,12 @@ namespace Services.Providers.Google
         private string NextPageUrl = null;
         private readonly string BaseAddress = "https://www.google.com";
         private readonly IConfig _config;
+        private readonly ILogger<GoogleRetriever> _logger;
 
-        public GoogleRetriever(IConfig config)
+        public GoogleRetriever(IConfig config, ILogger<GoogleRetriever> logger)
         {
             _config = config;
+            _logger = logger;
         }
 
         public async Task<HtmlDocument> RetrieveResultsFromProvider(string searchTerm)
@@ -36,6 +39,7 @@ namespace Services.Providers.Google
         {
             if(NextPageUrl==null)
             {
+                _logger.LogWarning("Couldn't find next page information");
                 return null;
             }
 

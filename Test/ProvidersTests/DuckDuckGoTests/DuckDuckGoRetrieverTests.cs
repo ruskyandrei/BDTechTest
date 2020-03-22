@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
 using Services;
 using Services.Configuration;
 using Services.Providers;
@@ -15,7 +17,7 @@ namespace Test.ProvidersTests.DuckDuckGoTests
         [SetUp]
         public void Setup()
         {
-            Retriever = new DuckDuckGoRetriever(new Config());
+            Retriever = new DuckDuckGoRetriever(new Config(), new Mock<ILogger<DuckDuckGoRetriever>>().Object);
         }
 
 
@@ -42,6 +44,18 @@ namespace Test.ProvidersTests.DuckDuckGoTests
 
             //Assert
             Assert.IsTrue(htmlResult_page2.Text.Contains("<td valign=\"top\">20.&nbsp;</td>"));
+        }
+
+        [Test]
+        public async Task CanSearchForMultipleWords()
+        {
+            //Arrange
+
+            //Act
+            var htmlResult = await Retriever.RetrieveResultsFromProvider("I like ice-cream");
+
+            //Assert
+            Assert.IsTrue(htmlResult.Text.Contains("<title>I like ice-cream at DuckDuckGo</title>"));
         }
     }
 }

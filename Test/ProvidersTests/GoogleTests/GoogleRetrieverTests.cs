@@ -1,4 +1,6 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using Services.Configuration;
 using Services.Providers;
@@ -18,7 +20,7 @@ namespace Test.ProvidersTests.GoogleTests
         [SetUp]
         public void Setup()
         {
-            Retriever = new GoogleRetriever(new Config());
+            Retriever = new GoogleRetriever(new Config(), new Mock<ILogger<GoogleRetriever>>().Object);
         }
 
 
@@ -47,6 +49,18 @@ namespace Test.ProvidersTests.GoogleTests
 
             //Assert
             Assert.IsTrue(htmlResult.Text.Contains("<a aria-label=\"Page 1\""));
+        }
+
+        [Test]
+        public async Task CanSearchForMultipleWords()
+        {
+            //Arrange
+
+            //Act
+            var htmlResult = await Retriever.RetrieveResultsFromProvider("I like ice-cream");
+
+            //Assert
+            Assert.IsTrue(htmlResult.Text.Contains("<title>I like ice-cream - Google Search</title>"));
         }
     }
 }

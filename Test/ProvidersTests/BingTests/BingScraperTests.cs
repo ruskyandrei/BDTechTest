@@ -1,4 +1,6 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using Services.Providers;
 using Services.Providers.Bing;
@@ -20,7 +22,7 @@ namespace Test.ProvidersTests.BingTests
         [SetUp]
         public void Setup()
         {
-            Scraper = new BingScraper();
+            Scraper = new BingScraper(new Mock<ILogger<BingScraper>>().Object);
             HtmlPage = new HtmlDocument();
 
             HtmlPage.Load(@"ProvidersTests\BingTests\BingHtmlPage.txt");

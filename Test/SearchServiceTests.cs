@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using Services;
 using Services.Configuration;
@@ -38,32 +39,27 @@ namespace Test
 
         private readonly IConfig Config = new TestConfig();
 
-        [SetUp]
-        public void Setup()
-        {  
-        }
-
         [Test]
         public async Task FullSearchTest()
         {
             //Arrange
             var retrievers = new List<IRetriever>()
             {
-                new GoogleRetriever(Config),
-                new DuckDuckGoRetriever(Config),
-                new BingRetriever(Config)
+                new GoogleRetriever(Config,new Mock<ILogger<GoogleRetriever>>().Object),
+                new DuckDuckGoRetriever(Config, new Mock<ILogger<DuckDuckGoRetriever>>().Object),
+                new BingRetriever(Config, new Mock<ILogger<BingRetriever>>().Object)
             };
 
             var scrapers = new List<IScraper>()
             {
-                new GoogleScraper(),
-                new DuckDuckGoScraper(),
-                new BingScraper()
+                new GoogleScraper(new Mock<ILogger<GoogleScraper>>().Object),
+                new DuckDuckGoScraper(new Mock<ILogger<DuckDuckGoScraper>>().Object),
+                new BingScraper(new Mock<ILogger<BingScraper>>().Object)
             };
 
             var aggregatorService = new AggregatorService();
 
-            var searchService = new SearchService(retrievers, scrapers, aggregatorService, Config);
+            var searchService = new SearchService(retrievers, scrapers, aggregatorService, Config, new Mock<ILogger<SearchService>>().Object);
             //Act
             var results = await searchService.Search("tesla");
             //Assert

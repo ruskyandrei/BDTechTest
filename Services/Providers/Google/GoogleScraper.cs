@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using Services.Enums;
 using Services.Models;
 
@@ -13,12 +14,20 @@ namespace Services.Providers.Google
     {
         public SearchProvider SearchProvider => SearchProvider.Google;
 
+        private readonly ILogger<GoogleScraper> _logger;
+
+        public GoogleScraper(ILogger<GoogleScraper> logger)
+        {
+            _logger = logger;
+        }
+
         public async Task<IEnumerable<SearchResult>> ScrapeResults(HtmlDocument html)
         {
             var searchResults = new List<SearchResult>();
 
-            if(html == null)
+            if(html == null || html.DocumentNode == null)
             {
+                _logger.LogWarning("No html document to scrape.");
                 return searchResults;
             }
 
@@ -26,6 +35,7 @@ namespace Services.Providers.Google
 
             if (links == null)
             {
+                _logger.LogWarning("Result links not found.");
                 return searchResults;
             }
 

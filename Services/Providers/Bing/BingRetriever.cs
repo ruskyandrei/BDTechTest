@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web;
 using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using Services.Configuration;
 using Services.Enums;
 using Services.Models;
@@ -16,11 +17,13 @@ namespace Services.Providers.Bing
         private string NextPageUrl = null;
 
         private readonly IConfig _config;
+        private readonly ILogger<BingRetriever> _logger;
         private readonly string BaseAddress = "https://www.bing.com";
 
-        public BingRetriever(IConfig config)
+        public BingRetriever(IConfig config, ILogger<BingRetriever> logger)
         {
             _config = config;
+            _logger = logger;
         }
 
         public async Task<HtmlDocument> RetrieveResultsFromProvider(string searchTerm)
@@ -40,6 +43,7 @@ namespace Services.Providers.Bing
         {
             if (NextPageUrl == null)
             {
+                _logger.LogWarning("Couldn't find next page information");
                 return null;
             }
 
